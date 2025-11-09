@@ -1,0 +1,268 @@
+﻿Dokumentasi Alur Kerja Developer: Aplikasi Buku Kas Desa
+
+
+Tujuan Proyek: Membangun aplikasi buku kas modern, responsif, dan cerdas untuk manajemen keuangan desa, yang dioptimalkan untuk shared web hosting (hosting PHP).
+Tumpukan Teknologi Utama:
+* Backend: Laravel (PHP)
+* Frontend Interaktif: Livewire
+* Styling: Tailwind CSS
+* Database: MySQL
+* Panggilan API: Guzzle (untuk Gemini AI)
+________________
+
+
+Alur Kerja Proyek (Fase-per-Fase)
+
+
+Berikut adalah langkah-langkah yang direkomendasikan untuk diikuti secara berurutan.
+
+
+Fase 0: Penyiapan Lingkungan (Lokal)
+
+
+Sebelum memulai, pastikan lingkungan development Anda memiliki:
+1. Server Lokal: XAMPP, MAMP, atau (jika Anda menggunakan macOS/Linux) Laravel Valet.
+2. PHP: Versi >= 8.1.
+3. Composer: Manajer paket PHP. Ini wajib.
+4. Node.js & NPM: Diperlukan untuk menginstal dan meng-compile aset frontend (Tailwind CSS, Livewire).
+5. Database: Klien MySQL (seperti phpMyAdmin dari XAMPP, atau TablePlus/DBeaver).
+
+
+Fase 1: Inisiasi Proyek & Fondasi Autentikasi
+
+
+1. Buat Proyek Laravel:
+Bash
+composer create-project laravel/laravel buku-kas-desa
+cd buku-kas-desa
+
+2. Konfigurasi .env:
+   * Buka file .env di root proyek.
+   * Atur koneksi database Anda (terutama DB_DATABASE, DB_USERNAME, DB_PASSWORD).
+   * DB_DATABASE=buku_kas_desa (Pastikan Anda membuat database ini di MySQL).
+   3. Instal Livewire:
+Bash
+composer require livewire/livewire
+
+   4. Instal Autentikasi (Breeze):
+      * Kita akan menggunakan Laravel Breeze untuk sistem login/register yang instan.
+Bash
+composer require laravel/breeze --dev
+php artisan breeze:install livewire
+
+      * Perintah ini SANGAT PENTING. Ini akan secara otomatis mengkonfigurasi sistem login, register, dan reset password Anda menggunakan komponen Livewire.
+      5. Instal & Jalankan Aset:
+Bash
+npm install
+npm run dev
+
+         * npm run dev akan memantau perubahan pada file Tailwind dan Livewire Anda. Biarkan ini berjalan di terminal terpisah.
+         6. Migrasi Database:
+Bash
+php artisan migrate
+
+            * Perintah ini akan membuat tabel users (dan tabel bawaan Laravel lainnya) di database MySQL Anda.
+CHECKPOINT: Pada titik ini, Anda seharusnya sudah bisa membuka aplikasi di browser (http://localhost:8000), mendaftar (register), login, dan logout.
+
+
+Fase 2: Model Inti & Migrasi Database
+
+
+            1. Rancang Model Data: Kita membutuhkan model utama untuk Transaction (Transaksi) dan Category (Kategori).
+            2. Buat Model & Migrasi:
+Bash
+php artisan make:model Category -m
+php artisan make:model Transaction -m
+
+               * Bendera -m secara otomatis membuat file migration untuk setiap model.
+               3. Definisikan Skema (di file Migrasi):
+               * Buka file di database/migrations/..._create_categories_table.php:
+PHP
+Schema::create('categories', function (Blueprint $table) {
+   $table->id();
+   $table->string('name');
+   $table->enum('type', ['pemasukan', 'pengeluaran']);
+   $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Opsional: jika kategori per pengguna
+   $table->timestamps();
+});
+
+               * Buka file di database/migrations/..._create_transactions_table.php:
+PHP
+Schema::create('transactions', function (Blueprint $table) {
+   $table->id();
+   $table->foreignId('user_id')->constrained()->onDelete('cascade');
+   $table->foreignId('category_id')->constrained();
+   $table->string('description');
+   $table->decimal('amount', 15, 2); // Penting untuk uang
+   $table->enum('type', ['pemasukan', 'pengeluaran']);
+   $table->date('transaction_date');
+   $table->timestamps();
+});
+
+                  4. Jalankan Migrasi:
+Bash
+php artisan migrate
+
+
+
+Fase 3: Tata Letak (Layout) & Komponen Halaman
+
+
+                     1. Atur Tata Letak Responsif:
+                     * Buka file tata letak utama (kemungkinan di resources/views/layouts/app.blade.php).
+                     * Ini adalah tempat Anda mengimplementasikan logika HTML/Tailwind untuk desain responsive:
+                     * Buat div untuk Sidebar Desktop (sembunyikan di seluler: hidden md:block).
+                     * Buat div untuk Navigasi Bawah Mobile (sembunyikan di desktop: md:hidden).
+                     * Pastikan tata letak ini memiliki {{ $slot }} di mana konten halaman akan diinjeksikan.
+                     2. Buat Komponen Halaman (Livewire):
+                     * Kita akan memperlakukan setiap "halaman" sebagai komponen Livewire.
+Bash
+php artisan make:livewire HalamanTransaksi
+php artisan make:livewire HalamanLaporanKas
+php artisan make:livewire HalamanLaporanLabaRugi
+php artisan make:livewire HalamanLaporanNeraca
+
+                     3. Atur Routing (Routes):
+                     * Buka routes/web.php.
+                     * Atur rute Anda agar memuat komponen Livewire ini. Pastikan mereka dilindungi oleh middleware auth.
+PHP
+use App\Livewire\HalamanTransaksi;
+// ...impor lainnya...
+
+Route::middleware('auth')->group(function () {
+   // Ganti rute dashboard bawaan
+   Route::get('/dashboard', HalamanTransaksi::class)->name('dashboard');
+
+   Route::get('/laporan/kas', HalamanLaporanKas::class)->name('laporan.kas');
+   Route::get('/laporan/laba-rugi', HalamanLaporanLabaRugi::class)->name('laporan.labarugi');
+   Route::get('/laporan/neraca', HalamanLaporanNeraca::class)->name('laporan.neraca');
+
+   // ... rute profil bawaan Breeze ...
+});
+
+                     * Sekarang, perbarui tautan di sidebar desktop dan navigasi mobile Anda menggunakan route('dashboard'), route('laporan.kas'), dll.
+
+
+Fase 4: Fungsionalitas Inti (Modal & CRUD Transaksi)
+
+
+                     1. Buat Komponen Modal:
+                     * Modal "Catat Transaksi" adalah kandidat sempurna untuk komponen Livewire terpisah.
+Bash
+php artisan make:livewire ModalTransaksi
+
+                     2. Logika Buka/Tutup Modal:
+                     * Di komponen halaman utama (HalamanTransaksi), kelola status modal.
+                     * Gunakan fitur dispatch Livewire untuk membuka modal: wire:click="$dispatch('open-modal', 'modal-transaksi')"
+                     * Komponen ModalTransaksi akan "mendengarkan" event ini.
+                     3. Formulir & Validasi (di ModalTransaksi):
+                     * Buat public properties di ModalTransaksi.php: public $description, $amount, $type, $category_id, $transaction_date;.
+                     * Gunakan wire:model di view modal untuk mengikat input ke properti ini.
+                     * Tambahkan rules validasi di dalam komponen: #[Rule('required|min:3')] public $description;
+                     * Buat metode save():
+PHP
+public function save() {
+   $this->validate(); // Jalankan validasi
+
+   Transaction::create([
+       'user_id' => auth()->id(),
+       'description' => $this->description,
+       'amount' => $this->amount,
+       // ... data lainnya
+   ]);
+
+   $this->dispatch('close'); // Tutup modal
+   $this->dispatch('transaksi-baru'); // Kirim sinyal ke halaman utama
+}
+
+                        4. Tampilkan Daftar Transaksi (di HalamanTransaksi):
+                        * Tambahkan listener di HalamanTransaksi.php: #[On('transaksi-baru')]
+                        * Buat metode refreshTransaksi() { ... } yang dipicu oleh listener tersebut, atau biarkan Livewire menangani refresh data di render().
+                        * Di metode render():
+PHP
+public function render() {
+   $transactions = Transaction::where('user_id', auth()->id())
+                       ->latest()
+                       ->paginate(10);
+   return view('livewire.halaman-transaksi', compact('transactions'));
+}
+
+                        * Ulangi (foreach) $transactions di view Anda.
+
+
+Fase 5: Implementasi Modul Laporan
+
+
+                           1. Fokus pada satu laporan, misal: HalamanLaporanLabaRugi.
+                           2. Tambahkan Filter Tanggal:
+                           * Di HalamanLaporanLabaRugi.php, tambahkan public properties: public $startDate, $endDate;
+                           * Inisialisasi di metode mount(): $this->startDate = now()->startOfMonth()->format('Y-m-d');
+                           * Gunakan wire:model pada input tanggal di view.
+                           3. Logika Kueri (di metode render()):
+                           * Setiap kali tanggal berubah, metode render() akan otomatis dipanggil ulang.
+PHP
+public function render() {
+   $pendapatan = Transaction::where('user_id', auth()->id())
+       ->where('type', 'pemasukan')
+       ->whereBetween('transaction_date', [$this->startDate, $this->endDate])
+       ->sum('amount');
+
+   $beban = Transaction::where('user_id', auth()->id())
+       ->where('type', 'pengeluaran')
+       ->whereBetween('transaction_date', [$this->startDate, $this->endDate])
+       ->sum('amount');
+
+   $labaBersih = $pendapatan - $beban;
+
+   return view('livewire.halaman-laporan-laba-rugi', compact('pendapatan', 'beban', 'labaBersih'));
+}
+
+                           4. Ulangi proses ini untuk HalamanLaporanKas (fokus pada Tipe Transaksi) dan HalamanLaporanNeraca (lebih kompleks, akan membutuhkan kueri untuk Aset, Liabilitas, dan Ekuitas).
+
+
+Fase 6: Integrasi AI (Gemini)
+
+
+                           1. Instal Guzzle:
+Bash
+composer require guzzlehttp/guzzle
+
+                           2. Amankan API Key:
+                              * Tambahkan GEMINI_API_KEY=KUNCI_RAHASIA_ANDA di file .env.
+3* Buat file di config/services.php (jika belum ada) dan tambahkan:
+PHP
+'gemini' => [
+   'api_key' => env('GEMINI_API_KEY'),
+],
+
+                                 3. Buat Service Class (Best Practice):
+                                 * Buat file app/Services/GeminiService.php.
+                                 * Buat metode getCategorySuggestion(string $description) di dalamnya. Metode ini akan:
+                                 * Menggunakan Guzzle Client.
+                                 * Membangun prompt (seperti yang kita diskusikan).
+                                 * Memanggil API Gemini (menggunakan config('services.gemini.api_key')).
+                                 * Mengurai respons JSON dan mengembalikan nama kategori.
+                                 4. Hubungkan ke Livewire (ModalTransaksi):
+                                 * Buat metode suggestCategory() di ModalTransaksi.php.
+                                 * Panggil GeminiService dari sini.
+                                 * Setel hasilnya: $this->category_id = $suggestedCategory->id;
+                                 * Ikat metode ini ke tombol "✨ Sarankan": wire:click="suggestCategory"
+                                 5. Ulangi untuk fitur "Ringkasan Laporan AI", buat metode baru di GeminiService dan panggil dari komponen laporan (misal: HalamanLaporanKas).
+
+
+Fase 7: Finalisasi dan Deployment
+
+
+                                 1. Uji Coba (Testing): Uji semua alur, validasi formulir, dan responsivitas di berbagai perangkat.
+                                 2. Kompilasi Aset untuk Produksi:
+Bash
+npm run build
+
+                                    * Ini akan membuat file CSS dan JS yang di-minify untuk production.
+                                    3. Deployment ke Shared Hosting:
+                                    * Unggah semua file proyek Anda (kecuali folder node_modules).
+                                    * PENTING: Atur Document Root domain Anda agar menunjuk ke folder /public di dalam proyek Laravel Anda. Ini adalah standar keamanan vital untuk Laravel. Jika Anda tidak bisa melakukan ini, hosting Anda tidak dikonfigurasi dengan benar untuk Laravel.
+                                    * Impor database MySQL Anda (ekspor dari lokal, impor via phpMyAdmin di hosting).
+                                    * Konfigurasikan file .env di server Anda dengan kredensial database production dan APP_KEY yang unik (salin dari .env lokal Anda atau jalankan php artisan key:generate jika Anda memiliki akses SSH).
+                                    * Pastikan APP_DEBUG=false dan APP_ENV=production di .env server.
+                                    * Atur izin file/folder yang benar (biasanya 755 untuk folder dan 644 untuk file, terutama untuk folder storage dan bootstrap/cache).

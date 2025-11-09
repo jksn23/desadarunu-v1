@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Kas Desa - Responsif</title>
+    <!-- 1. Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* 2. Mengatur font modern (Inter) */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Latar belakang abu-abu untuk desktop */
+        }
+        /* Menyembunyikan tombol spinner di input number */
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- =================================== -->
+    <!--     SIDEBAR NAVIGASI (Desktop)      -->
+    <!-- =dinamis sembunyikan di mobile (md:block) -->
+    <!-- =================================== -->
+    <div class="fixed left-0 top-0 z-40 w-64 h-screen bg-white shadow-lg hidden md:block">
+        <div class="flex flex-col h-full">
+            <!-- Logo/Judul di Sidebar -->
+            <div class="flex items-center justify-center h-20 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-blue-600">Desa Darunu</h1>
+            </div>
+
+            <!-- Tombol Transaksi Baru (Desktop) -->
+            <div class="p-4">
+                <button onclick="openModal()" class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                    Catat Transaksi
+                </button>
+            </div>
+
+            <!-- Menu Navigasi Desktop -->
+            <nav class="flex-1 px-4 space-y-2">
+                <button id="nav-desktop-transaksi" onclick="showPage('page-transaksi')" class="nav-link-desktop w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid"><rect width="18" height="18" x="3" y="3" rx="2"/><rect width="7" height="7" x="3" y="3" rx="0"/><rect width="7" height="7" x="14" y="3" rx="0"/><rect width="7" height="7" x="14" y="14" rx="0"/><rect width="7" height="7" x="3" y="14" rx="0"/></svg>
+                    Transaksi
+                </button>
+                <button id="nav-desktop-lap-kas" onclick="showPage('page-lap-kas')" class="nav-link-desktop w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    Lap. Arus Kas
+                </button>
+                <button id="nav-desktop-lap-labarugi" onclick="showPage('page-lap-labarugi')" class="nav-link-desktop w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                    Lap. Laba Rugi
+                </button>
+                <button id="nav-desktop-lap-neraca" onclick="showPage('page-lap-neraca')" class="nav-link-desktop w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale"><path d="m16 16 3-8 3 8c.3.8-.1 1.6-.9 1.8-1 .3-1.9-.4-2.1-1.4l-1-4.6-1 4.6c-.2 1-.9 1.7-2 1.4-.7-.2-1.1-1-1-1.8Z"/><path d="m2 16 3-8 3 8c.3.8-.1 1.6-.9 1.8-1 .3-1.9-.4-2.1-1.4l-1-4.6-1 4.6c-.2 1-.9 1.7-2 1.4-.7-.2-1.1-1-1-1.8Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>
+                    Lap. Neraca
+                </button>
+            </nav>
+        </div>
+    </div>
+
+
+    <!-- =================================== -->
+    <!--     NAVIGASI BAWAH (Mobile)         -->
+    <!-- dinamis sembunyikan di desktop (md:hidden) -->
+    <!-- =================================== -->
+    <div class="fixed bottom-0 left-0 right-0 max-w-lg mx-auto bg-white border-t border-gray-200 shadow-[0_-2px_5px_rgba(0,0,0,0.05)] z-30 md:hidden">
+        <!-- Menggunakan flex dan items-center. h-16 akan menjadi tinggi dasar -->
+        <div class="flex items-center justify-around h-16">
+            
+            <!-- Nav Link 1: Transaksi (flex-1 untuk spasi merata) -->
+            <button id="nav-mobile-transaksi" onclick="showPage('page-transaksi')" class="nav-link-mobile flex-1 flex flex-col items-center justify-center px-2 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-grid"><rect width="18" height="18" x="3" y="3" rx="2"/><rect width="7" height="7" x="3" y="3" rx="0"/><rect width="7" height="7" x="14" y="3" rx="0"/><rect width="7" height="7" x="14" y="14" rx="0"/><rect width="7" height="7" x="3" y="14" rx="0"/></svg>
+            </button>
+            
+            <!-- Nav Link 2: Lap. Kas (flex-1) -->
+            <button id="nav-mobile-lap-kas" onclick="showPage('page-lap-kas')" class="nav-link-mobile flex-1 flex flex-col items-center justify-center px-2 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-dollar-sign"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            </button>
+            
+            <!-- Tombol + (BARU, di tengah dan menonjol) -->
+            <!-- flex-shrink-0 agar tidak mengecil, -translate-y-5 untuk mengangkat -->
+            <div class="flex-shrink-0">
+                <button onclick="openModal()" class="bg-blue-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all transform hover:scale-105 -translate-y-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                </button>
+            </div>
+            
+            <!-- Nav Link 3: Laba Rugi (flex-1) -->
+            <button id="nav-mobile-lap-labarugi" onclick="showPage('page-lap-labarugi')" class="nav-link-mobile flex-1 flex flex-col items-center justify-center px-2 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bar-chart-3"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+            </button>
+            
+            <!-- Nav Link 4: Neraca (flex-1) -->
+            <button id="nav-mobile-lap-neraca" onclick="showPage('page-lap-neraca')" class="nav-link-mobile flex-1 flex flex-col items-center justify-center px-2 py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scale"><path d="m16 16 3-8 3 8c.3.8-.1 1.6-.9 1.8-1 .3-1.9-.4-2.1-1.4l-1-4.6-1 4.6c-.2 1-.9 1.7-2 1.4-.7-.2-1.1-1-1-1.8Z"/><path d="m2 16 3-8 3 8c.3.8-.1 1.6-.9 1.8-1 .3-1.9-.4-2.1-1.4l-1-4.6-1 4.6c-.2 1-.9 1.7-2 1.4-.7-.2-1.1-1-1-1.8Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- =================================== -->
+    <!--   TOMBOL + (Mobile)   -->
+    <!-- dinamis sembunyikan di desktop (md:hidden) -->
+    <!-- =================================== -->
+    <!-- TOMBOL INI DIHAPUS KARENA SUDAH PINDAH KE NAVIGASI BAWAH -->
+    <!-- <button onclick="openModal()" class="fixed bottom-20 right-1/2 ..."> ... </button> -->
+    
+
+    <!-- =================================== -->
+    <!--         KONTEN UTAMA              -->
+    <!-- Konten utama, dengan margin kiri di desktop (md:ml-64) -->
+    <!-- =================================== -->
+    <div id="app" class="relative md:ml-64 min-h-screen">
+
+        <!-- ===== HEADER KONTEN (Desktop) ===== -->
+        <!-- Header ini hanya di atas area konten, bukan full-width -->
+        <nav class="bg-white shadow-sm sticky top-0 z-10">
+            <div class="px-4 md:px-8">
+                <div class="flex justify-between items-center h-20"> <!-- Hanya ada profil di sini -->
+                    <div class="flex items-center md:hidden mr-4">
+                        <h1 class="text-xl font-bold text-blue-600">Desa Darunu</h1>
+                    </div>
+                    <!-- Menu Profil -->
+                    <div class="relative">
+                        <button onclick="toggleProfileDropdown()" id="profile-btn" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        </button>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="profile-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-100 z-20">
+                            <div class="p-4">
+                                <p class="font-medium text-gray-800">Nama Pengguna</p>
+                                <p class="text-sm text-gray-500">pengguna@desadarunu.id</p>
+                            </div>
+                            <hr class="border-gray-100">
+                            <a href="#" class="block w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-gray-50 rounded-b-md">
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ===== KONTEN DINAMIS ===== -->
+        <!-- Padding di mobile (p-4), lebih besar di desktop (md:p-8) -->
+        <!-- Padding bottom untuk nav mobile (pb-24), hilang di desktop (md:pb-8) -->
+        <!-- Diubah ke pb-28 untuk memberi ruang bagi tombol + yang terangkat -->
+        <main class="p-4 md:p-8 pb-28 md:pb-8">
+
+            <!-- =================================== -->
+            <!--   HALAMAN 1: TRANSAKSI (Default)    -->
+            <!-- =================================== -->
+            <div id="page-transaksi" class="page-content">
+                
+                <!-- Kartu Saldo Terkini -->
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white rounded-xl p-6 mb-6 shadow-lg">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-sm font-medium text-blue-100">Saldo Terkini</span>
+                            <!-- Ukuran teks lebih besar di desktop -->
+                            <h2 class="text-4xl md:text-5xl font-bold">Rp 1.250.000</h2>
+                        </div>
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Judul Riwayat Transaksi -->
+                <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-3">Riwayat Transaksi</h3>
+
+                <!-- Daftar Transaksi (Simulasi) -->
+                <!-- Dibungkus dalam card di desktop -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <ul class="space-y-0 divide-y divide-gray-200">
+                        <!-- Item 1 (Pemasukan) -->
+                        <li class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-down-left"><path d="M17 7 7 17"/><path d="M17 17H7V7"/></svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Iuran Warga RT 01</p>
+                                    <span class="text-xs text-gray-500">26 Oktober 2025</span>
+                                </div>
+                            </div>
+                            <span class="font-semibold text-green-600 text-base">+ Rp 500.000</span>
+                        </li>
+                        
+                        <!-- Item 2 (Pengeluaran) -->
+                        <li class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 17 17 7"/><path d="M17 17V7H7"/></svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Beli ATK Kantor Desa</p>
+                                    <span class="text-xs text-gray-500">25 Oktober 2025</span>
+                                </div>
+                            </div>
+                            <span class="font-semibold text-red-600 text-base">- Rp 150.000</span>
+                        </li>
+
+                        <!-- Item 3 (Pengeluaran) -->
+                        <li class="flex items-center justify-between p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right"><path d="M7 17 17 7"/><path d="M17 17V7H7"/></svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-800">Bayar Listrik Kantor</p>
+                                    <span class="text-xs text-gray-500">25 Oktober 2025</span>
+                                </div>
+                            </div>
+                            <span class="font-semibold text-red-600 text-base">- Rp 100.000</span>
+                        </li>
+                    </ul>
+                </div>
+
+            </div> <!-- Penutup #page-transaksi -->
+
+            <!-- =================================== -->
+            <!--   HALAMAN 2: LAPORAN KAS (Hidden)   -->
+            <!-- =================================== -->
+            <div id="page-lap-kas" class="page-content hidden">
+                
+                <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Laporan Arus Kas</h3>
+
+                <!-- Filter Tanggal -->
+                <div class="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <p class="text-sm font-medium mb-2">Tampilkan Laporan Periode:</p>
+                    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                        <input type="date" value="2025-10-01" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <span class="hidden md:flex items-center text-gray-500">s/d</span>
+                        <input type="date" value="2025-10-31" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <button class="w-full md:w-auto bg-blue-600 text-white font-semibold py-2 px-6 rounded-md hover:bg-blue-700 transition-colors">
+                            Tampilkan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ringkasan Laporan (Simulasi) -->
+                <!-- Layout diubah ke 3 kolom di desktop (md:grid-cols-3) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <!-- Total Pemasukan -->
+                    <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                        <span class="text-sm font-medium text-green-700">Total Pemasukan</span>
+                        <p class="text-2xl font-bold text-green-600">Rp 2.000.000</p>
+                    </div>
+                    <!-- Total Pengeluaran -->
+                    <div class="bg-red-50 border border-red-200 p-4 rounded-lg">
+                        <span class="text-sm font-medium text-red-700">Total Pengeluaran</span>
+                        <p class="text-2xl font-bold text-red-600">Rp 750.000</p>
+                    </div>
+                    <!-- Surplus/Defisit -->
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                        <span class="text-sm font-medium text-blue-700">Surplus Kas</span>
+                        <p class="text-2xl font-bold text-blue-600">Rp 1.250.000</p>
+                    </div>
+                </div>
+
+                <!-- Fitur Gemini AI -->
+                <div class="my-6 p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <button id="ai-summary-btn" onclick="getAISummary()" class="w-full md:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white font-semibold py-2 px-4 rounded-md hover:from-purple-600 hover:to-blue-600 transition-colors disabled:opacity-70">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles"><path d="m12 3-1.91 5.83-5.83 1.91L12 12.66l1.91-1.92L19.74 12l-5.83-1.91L12 3zM5 12l-2 3 3 2 2-3-3-2zM19 12l2 3-3 2-2-3 3-2z"/></svg>
+                        ✨ Buat Ringkasan Laporan AI
+                    </button>
+                    <div id="ai-summary-result" class="hidden mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                        <p class="font-semibold mb-2 text-gray-800">Ringkasan dari AI:</p>
+                        <div id="ai-summary-content" class="text-gray-600 prose-sm">Memuat...</div>
+                    </div>
+                </div>
+
+            </div> <!-- Penutup #page-lap-kas -->
+
+            <!-- =================================== -->
+            <!-- HALAMAN 3: LAPORAN LABA RUGI (Hidden) -->
+            <!-- =================================== -->
+            <div id="page-lap-labarugi" class="page-content hidden">
+                
+                <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Laporan Laba Rugi</h3>
+
+                <!-- Filter Tanggal -->
+                <div class="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <p class="text-sm font-medium mb-2">Tampilkan Laporan Periode:</p>
+                    <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                        <input type="date" value="2025-10-01" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <span class="hidden md:flex items-center text-gray-500">s/d</span>
+                        <input type="date" value="2025-10-31" class="w-full p-2 border border-gray-300 rounded-md text-sm">
+                        <button class="w-full md:w-auto bg-blue-600 text-white font-semibold py-2 px-6 rounded-md hover:bg-blue-700 transition-colors">
+                            Tampilkan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Konten Laporan Laba Rugi (Simulasi) -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <!-- Header Laporan -->
+                    <div class="p-4 border-b border-gray-200">
+                        <h4 class="text-base font-semibold text-gray-800">Laporan Laba Rugi</h4>
+                        <p class="text-sm text-gray-500">Periode 1 Oktober - 31 Oktober 2025</p>
+                    </div>
+
+                    <!-- Isi Laporan -->
+                    <div class="p-4 md:p-6 space-y-4">
+                        <!-- Pendapatan -->
+                        <div>
+                            <h5 class="text-sm font-semibold text-gray-700 mb-2">PENDAPATAN</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li class="flex justify-between items-center py-1">
+                                    <span class="text-gray-600">Pendapatan Retribusi Pasar</span>
+                                    <span class="font-medium text-gray-800">Rp 1.500.000</span>
+                                </li>
+                                <li class="flex justify-between items-center py-1">
+                                    <span class="text-gray-600">Pendapatan Iuran Warga</span>
+                                    <span class="font-medium text-gray-800">Rp 500.000</span>
+                                </li>
+                            </ul>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                <span class="font-semibold text-gray-800">Total Pendapatan</span>
+                                <span class="font-bold text-gray-900">Rp 2.000.000</span>
+                            </div>
+                        </div>
+
+                        <!-- Beban -->
+                        <div>
+                            <h5 class="text-sm font-semibold text-gray-700 mb-2">BEBAN OPERASIONAL</h5>
+                            <ul class="space-y-1 text-sm">
+                                <li class="flex justify-between items-center py-1">
+                                    <span class="text-gray-600">Beban Listrik & ATK</span>
+                                    <span class="font-medium text-gray-800">(Rp 250.000)</span>
+                                </li>
+                                <li class="flex justify-between items-center py-1">
+                                    <span class="text-gray-600">Beban Transportasi</span>
+                                    <span class="font-medium text-gray-800">(Rp 200.000)</span>
+                                </li>
+                                <li class="flex justify-between items-center py-1">
+                                    <span class="text-gray-600">Beban Honor Petugas</span>
+                                    <span class="font-medium text-gray-800">(Rp 300.000)</span>
+                                </li>
+                            </ul>
+                            <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                <span class="font-semibold text-red-600">Total Beban</span>
+                                <span class="font-bold text-red-600">(Rp 750.000)</span>
+                            </div>
+                        </div>
+
+                        <!-- Garis Pemisah -->
+                        <hr class="border-gray-200" />
+
+                        <!-- Laba Bersih -->
+                        <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
+                            <h4 class="text-lg font-bold text-blue-700">LABA BERSIH</h4>
+                            <h4 class="text-lg font-bold text-blue-700">Rp 1.250.000</h4>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- Penutup #page-lap-labarugi -->
+
+            <!-- =================================== -->
+            <!-- HALAMAN 4: LAPORAN NERACA (Hidden)  -->
+            <!-- =================================== -->
+            <div id="page-lap-neraca" class="page-content hidden">
+                
+                <h3 class="text-lg md:text-xl font-semibold text-gray-700 mb-4">Laporan Posisi Keuangan (Neraca)</h3>
+
+                <!-- Filter Tanggal -->
+                <div class="mb-6 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                    <p class="text-sm font-medium mb-2">Tampilkan Laporan per Tanggal:</p>
+                    <div class="flex">
+                        <input type="date" value="2025-10-31" class="w-full md:w-1/2 p-2 border border-gray-300 rounded-md text-sm">
+                        <button class="bg-blue-600 text-white font-semibold py-2 px-6 rounded-md hover:bg-blue-700 transition-colors ml-2">
+                            Tampilkan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Konten Laporan Neraca (Simulasi) -->
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+                    <!-- Header Laporan -->
+                    <div class="p-4 border-b border-gray-200">
+                        <h4 class="text-base font-semibold text-gray-800">Laporan Posisi Keuangan</h4>
+                        <p class="text-sm text-gray-500">Per 31 Oktober 2025</p>
+                    </div>
+
+                    <!-- Isi Laporan -->
+                    <!-- Di desktop, bisa dibuat 2 kolom -->
+                    <div class="p-4 md:p-6 grid grid-cols-1 md:grid-cols-2 md:gap-8">
+                        
+                        <!-- ASET -->
+                        <div class="space-y-4">
+                            <h5 class="text-base font-semibold text-gray-700 mb-2">ASET</h5>
+                            <!-- Aset Lancar -->
+                            <div class="pl-2">
+                                <h6 class="text-sm font-medium text-gray-600 mb-1">Aset Lancar</h6>
+                                <ul class="space-y-1 text-sm pl-3">
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Kas dan Setara Kas</span>
+                                        <span class="font-medium text-gray-800">Rp 1.250.000</span>
+                                    </li>
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Piutang Usaha</span>
+                                        <span class="font-medium text-gray-800">Rp 300.000</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                    <span class="font-semibold text-gray-800 text-sm">Total Aset Lancar</span>
+                                    <span class="font-bold text-gray-900 text-sm">Rp 1.550.000</span>
+                                </div>
+                            </div>
+                            <!-- Aset Tetap -->
+                            <div class="pl-2 mt-3">
+                                <h6 class="text-sm font-medium text-gray-600 mb-1">Aset Tetap</h6>
+                                <ul class="space-y-1 text-sm pl-3">
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Peralatan Kantor</span>
+                                        <span class="font-medium text-gray-800">Rp 5.000.000</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                    <span class="font-semibold text-gray-800 text-sm">Total Aset Tetap</span>
+                                    <span class="font-bold text-gray-900 text-sm">Rp 5.000.000</span>
+                                </div>
+                            </div>
+                            <!-- Total Aset -->
+                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg mt-4">
+                                <span class="font-bold text-blue-700">TOTAL ASET</span>
+                                <span class="font-bold text-blue-700">Rp 6.550.000</span>
+                            </div>
+                        </div>
+
+                        <!-- LIABILITAS & EKUITAS -->
+                        <div class="space-y-4 mt-6 md:mt-0">
+                            <h5 class="text-base font-semibold text-gray-700 mb-2">LIABILITAS DAN EKUITAS</h5>
+                            <!-- Liabilitas -->
+                            <div class="pl-2">
+                                <h6 class="text-sm font-medium text-gray-600 mb-1">Liabilitas</h6>
+                                <ul class="space-y-1 text-sm pl-3">
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Utang Usaha</span>
+                                        <span class="font-medium text-gray-800">Rp 300.000</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                    <span class="font-semibold text-red-600 text-sm">Total Liabilitas</span>
+                                    <span class="font-bold text-red-600 text-sm">Rp 300.000</span>
+                                </div>
+                            </div>
+                            <!-- Ekuitas -->
+                            <div class="pl-2 mt-3">
+                                <h6 class="text-sm font-medium text-gray-600 mb-1">Ekuitas</h6>
+                                <ul class="space-y-1 text-sm pl-3">
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Modal Awal</span>
+                                        <span class="font-medium text-gray-800">Rp 5.000.000</span>
+                                    </li>
+                                    <li class="flex justify-between items-center py-1">
+                                        <span class="text-gray-600">Laba Ditahan</span>
+                                        <span class="font-medium text-gray-800">Rp 1.250.000</span>
+                                    </li>
+                                </ul>
+                                <div class="flex justify-between items-center p-2 bg-gray-50 rounded-md mt-2">
+                                    <span class="font-semibold text-gray-800 text-sm">Total Ekuitas</span>
+                                    <span class="font-bold text-gray-900 text-sm">Rp 6.250.000</span>
+                                </div>
+                            </div>
+                            <!-- Total Liabilitas & Ekuitas -->
+                            <div class="flex justify-between items-center p-3 bg-blue-50 rounded-lg mt-4">
+                                <span class="font-bold text-blue-700">TOTAL LIABILITAS & EKUITAS</span>
+                                <span class="font-bold text-blue-700">Rp 6.550.000</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div> <!-- Penutup #page-lap-neraca -->
+
+        </main> <!-- Penutup Konten Utama -->
+
+    </div> <!-- Penutup #app -->
+
+
+    <!-- =================================== -->
+    <!--   MODAL TAMBAH TRANSAKSI (Hidden)   -->
+    <!-- (Desain modal sudah responsif) -->
+    <!-- =================================== -->
+    <div id="transaksi-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        
+        <div class="bg-white w-full max-w-md rounded-xl shadow-2xl transform transition-all opacity-0 translate-y-10" id="modal-content">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                <h3 class="text-lg font-semibold">Catat Transaksi Baru</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+
+            <!-- Modal Body (Form) -->
+            <form id="transaksi-form" class="p-6 space-y-4">
+                <!-- Tipe Transaksi -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Tipe Transaksi</label>
+                    <div class="flex space-x-2">
+                        <label class="flex-1">
+                            <input type="radio" name="tipe" value="pemasukan" class="sr-only" checked>
+                            <span class="block w-full text-center p-3 rounded-lg border border-gray-300 cursor-pointer peer-checked:bg-green-50 peer-checked:border-green-400 peer-checked:text-green-600 font-medium">Pemasukan</span>
+                        </label>
+                        <label class="flex-1">
+                            <input type="radio" name="tipe" value="pengeluaran" class="sr-only">
+                            <span class="block w-full text-center p-3 rounded-lg border border-gray-300 cursor-pointer peer-checked:bg-red-50 peer-checked:border-red-400 peer-checked:text-red-600 font-medium">Pengeluaran</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Keterangan -->
+                <div>
+                    <label for="keterangan" class="block text-sm font-medium text-gray-600 mb-1">Keterangan</label>
+                    <input type="text" id="keterangan" placeholder="Contoh: Iuran warga" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+
+                <!-- Kategori -->
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="kategori" class="block text-sm font-medium text-gray-600">Kategori</label>
+                        <button type="button" id="suggest-category-btn" onclick="suggestCategory()" class="text-xs text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50 disabled:cursor-wait">
+                            ✨ Sarankan Kategori
+                        </button>
+                    </div>
+                    <select id="kategori" class="w-full p-2 border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="iuran">Iuran</option>
+                        <option value="retribusi">Retribusi</option>
+                        <option value="sewa">Sewa Aset Desa</option>
+                        <option value="atk">ATK</option>
+                        <option value="listrik">Listrik/Telepon</option>
+                        <option value="transportasi">Transportasi</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-2">
+                    <!-- Jumlah -->
+                    <div class="flex-1">
+                        <label for="jumlah" class="block text-sm font-medium text-gray-600 mb-1">Jumlah (Rp)</label>
+                        <input type="number" id="jumlah" placeholder="50000" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <!-- Tanggal -->
+                    <div class="flex-1">
+                        <label for="tanggal" class="block text-sm font-medium text-gray-600 mb-1">Tanggal</label>
+                        <input type="date" id="tanggal" value="2025-10-27" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </form>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-gray-50 border-t border-gray-200 rounded-b-xl flex justify-end space-x-3">
+                <button onclick="closeModal()" class="px-5 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                    Batal
+                </button>
+                <button onclick="simpanTransaksi()" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+                    Simpan Transaksi
+                </button>
+            </div>
+
+        </div>
+    </div> <!-- Penutup Modal -->
+
+
+    <!-- Notifikasi Toast (Hidden) -->
+    <!-- Dipindahkan ke bottom-5 dan kanan-5 untuk desktop -->
+    <div id="toast" class="fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg transition-all opacity-0 transform translate-y-5 z-50">
+        <span id="toast-message"></span>
+    </div>
+
+
+    <!-- =================================== -->
+    <script>
+        const pages = document.querySelectorAll('.page-content');
+        const allNavLinksDesktop = document.querySelectorAll('.nav-link-desktop');
+        const allNavLinksMobile = document.querySelectorAll('.nav-link-mobile');
+        
+        const modal = document.getElementById('transaksi-modal');
+        const modalContent = document.getElementById('modal-content');
+        
+        // --- Variabel untuk API ---
+        const apiKey = ""; // Dibiarkan kosong, akan diisi oleh environment
+        const generativeApiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        // --- Fungsi Navigasi Halaman ---
+        function showPage(pageId) {
+            // Sembunyikan semua halaman
+            pages.forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Tampilkan halaman yang dipilih
+            const activePage = document.getElementById(pageId);
+            if (activePage) {
+                activePage.classList.remove('hidden');
+            }
+
+            // Atur status aktif untuk Navigasi Desktop
+            allNavLinksDesktop.forEach(link => {
+                link.classList.remove('bg-blue-50', 'text-blue-600', 'font-semibold');
+                link.classList.add('text-gray-500', 'font-medium', 'hover:bg-gray-100');
+            });
+            
+            // Atur status aktif untuk Navigasi Mobile
+            allNavLinksMobile.forEach(link => {
+                link.classList.remove('text-blue-600', 'font-semibold');
+                link.classList.add('text-gray-500', 'font-medium');
+            });
+            
+            // Dapatkan ID tombol yang sesuai
+            const navIdDesktop = `nav-desktop-${pageId.substring(5)}`;
+            const navIdMobile = `nav-mobile-${pageId.substring(5)}`;
+            
+            const activeLinkDesktop = document.getElementById(navIdDesktop);
+            const activeLinkMobile = document.getElementById(navIdMobile);
+            
+            if (activeLinkDesktop) {
+                activeLinkDesktop.classList.add('bg-blue-50', 'text-blue-600', 'font-semibold');
+                activeLinkDesktop.classList.remove('text-gray-500', 'font-medium', 'hover:bg-gray-100');
+            }
+            if (activeLinkMobile) {
+                activeLinkMobile.classList.add('text-blue-600', 'font-semibold');
+                activeLinkMobile.classList.remove('text-gray-500', 'font-medium');
+            }
+        }
+
+        // --- Fungsi Dropdown Profil ---
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Menutup dropdown jika klik di luar
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('profile-dropdown');
+            const profileBtn = document.getElementById('profile-btn');
+            
+            if (!dropdown.classList.contains('hidden') && !profileBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // --- Fungsi Modal ---
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('opacity-0', 'translate-y-10');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.add('opacity-0', 'translate-y-10');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                document.getElementById('transaksi-form').reset();
+            }, 300);
+        }
+
+        // --- Fungsi Notifikasi Toast ---
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.innerText = message;
+            // Reset kelas
+            toast.className = 'fixed bottom-5 right-5 text-white px-5 py-3 rounded-lg shadow-lg transition-all opacity-0 transform translate-y-5 z-50';
+            
+            if (isError) {
+                toast.classList.add('bg-red-600');
+            } else {
+                toast.classList.add('bg-gray-900');
+            }
+            
+            toast.classList.remove('opacity-0', 'translate-y-5');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-5');
+            }, 3000);
+        }
+
+        // --- Fungsi Fetch API dengan Exponential Backoff ---
+        async function fetchWithBackoff(url, payload, maxRetries = 5) {
+            let delay = 1000;
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        return await response.json();
+                    } else if (response.status === 429) {
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    } else {
+                        throw new Error(`API Error: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+            throw new Error('Gagal mengambil data dari API setelah beberapa percobaan.');
+        }
+        
+        // --- Fungsi Simpan (Simulasi) ---
+        function simpanTransaksi() {
+            const keterangan = document.getElementById('keterangan').value;
+            const jumlah = document.getElementById('jumlah').value;
+            
+            if (!keterangan || !jumlah) {
+                showToast('Harap isi keterangan dan jumlah.', true);
+                return;
+            }
+
+            console.log('Data tersimpan:', { keterangan, jumlah });
+            showToast('Transaksi berhasil disimpan!');
+            
+            closeModal();
+        }
+
+        // --- ✨ Fitur Gemini: Sarankan Kategori ---
+        async function suggestCategory() {
+            const keterangan = document.getElementById('keterangan').value;
+            const suggestButton = document.getElementById('suggest-category-btn');
+            
+            if (!keterangan) {
+                showToast('Isi keterangan terlebih dahulu.', true);
+                return;
+            }
+
+            suggestButton.innerText = 'Menganalisis...';
+            suggestButton.disabled = true;
+
+            const categories = ['iuran', 'retribusi', 'sewa', 'atk', 'listrik', 'transportasi', 'lainnya'];
+            const systemPrompt = `Anda adalah akuntan ahli. Tugas Anda adalah mengkategorikan pengeluaran. Berdasarkan deskripsi dan daftar kategori, pilih satu kategori terbaik. Anda harus merespon dengan format JSON yang valid.`;
+            const userQuery = `Deskripsi: "${keterangan}"\nDaftar Kategori: ${categories.join(', ')}\nPilih kategori yang paling sesuai.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            "kategori": { 
+                                "type": "STRING",
+                                "enum": categories
+                            }
+                        },
+                        required: ["kategori"]
+                    }
+                }
+            };
+
+            try {
+                const result = await fetchWithBackoff(generativeApiUrl, payload);
+                const jsonText = result.candidates[0].content.parts[0].text;
+                const parsedJson = JSON.parse(jsonText);
+                
+                if (parsedJson.kategori) {
+                    document.getElementById('kategori').value = parsedJson.kategori;
+                    showToast('Kategori disarankan oleh AI!');
+                } else {
+                    throw new Error('Respon AI tidak valid.');
+                }
+            } catch (error) {
+                console.error('Error suggesting category:', error);
+                showToast('Gagal menyarankan kategori.', true);
+            } finally {
+                suggestButton.innerText = '✨ Sarankan Kategori';
+                suggestButton.disabled = false;
+            }
+        }
+
+        // --- ✨ Fitur Gemini: Ringkasan Laporan AI ---
+        async function getAISummary() {
+            const resultBox = document.getElementById('ai-summary-result');
+            const resultContent = document.getElementById('ai-summary-content');
+            const aiButton = document.getElementById('ai-summary-btn');
+
+            resultBox.classList.remove('hidden');
+            resultContent.innerHTML = '<div class="text-center animate-pulse">Memuat analisis...</div>';
+            aiButton.disabled = true;
+
+            try {
+                // Data simulasi masih diambil dari elemen UI
+                const totalPemasukan = document.querySelector('#page-lap-kas .bg-green-50 p').innerText;
+                const totalPengeluaran = document.querySelector('#page-lap-kas .bg-red-50 p').innerText;
+                const surplus = document.querySelector('#page-lap-kas .bg-blue-50 p').innerText;
+
+                const systemPrompt = "Anda adalah asisten keuangan untuk aparatur desa di Indonesia. Berikan ringkasan 2-3 kalimat yang singkat, jelas, dan profesional dalam bahasa Indonesia. Fokus pada poin terpenting. Sapa dengan 'Bapak/Ibu Pengurus,'. Jangan gunakan markdown.";
+                const userQuery = `
+                    Berikut adalah data keuangan desa untuk periode ini:
+                    - Total Pemasukan: ${totalPemasukan}
+                    - Total Pengeluaran: ${totalPengeluaran}
+                    - Hasil (Surplus/Defisit): ${surplus}
+                    Tolong buatkan ringkasan singkat (2-3 kalimat) dalam Bahasa Indonesia.
+                `;
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                const result = await fetchWithBackoff(generativeApiUrl, payload);
+                
+                if (result.candidates && result.candidates[0].content.parts[0].text) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultContent.innerText = text;
+                } else {
+                    throw new Error('Respon AI tidak berisi teks.');
+                }
+
+            } catch (error) {
+                console.error('Error getting AI summary:', error);
+                resultContent.innerText = 'Gagal memuat ringkasan. Silakan coba lagi nanti.';
+            } finally {
+                aiButton.disabled = false;
+            }
+        }
+        
+        // Set halaman default saat dimuat
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('page-transaksi');
+        });
+    </script>
+
+</body>
+</html>
+
