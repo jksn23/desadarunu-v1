@@ -42,14 +42,7 @@ new #[Layout('layouts.auth-guest')] class extends Component
             <aside class="hidden md:flex w-full md:w-5/12 xl:w-[430px] bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 text-white px-10 py-14 xl:px-16 xl:py-16">
                 <div class="space-y-6">
                     <div class="inline-flex items-center gap-3">
-                        <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 3h18v12H3z" />
-                                <path d="m3 7 9 6 9-6" />
-                                <path d="M7 21h10" />
-                                <path d="M12 15v6" />
-                            </svg>
-                        </span>
+                        <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-12 w-12 rounded-2xl bg-white/20 object-contain p-1">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Buku Kas Desa</p>
                             <h2 class="text-2xl font-semibold">Bangun Kepercayaan Warga</h2>
@@ -89,8 +82,13 @@ new #[Layout('layouts.auth-guest')] class extends Component
 
             <div class="w-full md:flex-1 px-6 py-8 sm:px-10 sm:py-12 lg:px-14 xl:px-16 xl:py-16">
                 <div class="md:hidden mb-8 rounded-3xl bg-gradient-to-br from-blue-700 via-blue-600 to-blue-500 p-6 text-white shadow-lg">
-                    <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Buku Kas Desa</p>
-                    <h2 class="mt-2 text-xl font-semibold">Bangun Kepercayaan Warga</h2>
+                    <div class="flex items-center gap-3">
+                        <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-10 w-10 rounded-2xl bg-white/20 object-contain p-1">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Buku Kas Desa</p>
+                            <h2 class="text-xl font-semibold">Bangun Kepercayaan Warga</h2>
+                        </div>
+                    </div>
                     <p class="mt-3 text-sm text-blue-100 leading-relaxed">
                         Daftarkan akun aparatur desa untuk menjaga pencatatan kas tetap transparan dan terkoordinasi.
                     </p>
@@ -99,14 +97,7 @@ new #[Layout('layouts.auth-guest')] class extends Component
                 <div class="mx-auto w-full max-w-xl space-y-8">
                     <header class="space-y-4">
                         <div class="inline-flex items-center gap-3">
-                            <span class="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M3 3h18v12H3z" />
-                                    <path d="m3 7 9 6 9-6" />
-                                    <path d="M7 21h10" />
-                                    <path d="M12 15v6" />
-                                </svg>
-                            </span>
+                            <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-12 w-12 rounded-2xl bg-blue-100 object-contain p-1">
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">Akun Baru Perangkat Desa</p>
                                 <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl">Daftar untuk Mulai Mengelola Kas</h1>

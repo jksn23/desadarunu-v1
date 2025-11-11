@@ -42,7 +42,10 @@
         <div class="min-h-screen flex bg-gray-100">
             <aside class="fixed inset-y-0 left-0 hidden w-64 bg-white shadow-lg md:flex md:flex-col z-40">
                 <div class="flex items-center justify-center h-20 border-b border-gray-200">
-                    <span class="text-2xl font-bold text-blue-600">Desa Darunu</span>
+                    <div class="flex flex-col items-center gap-2">
+                        <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-12 w-12 object-contain">
+                        <span class="text-lg font-semibold text-blue-700">Desa Darunu</span>
+                    </div>
                 </div>
                 <div class="p-4">
                     <button
