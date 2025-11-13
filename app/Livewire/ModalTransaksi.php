@@ -4,7 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Category;
 use App\Models\Transaction;
-use App\Services\GeminiService;
+use App\Services\OpenAIService;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
@@ -105,7 +105,7 @@ class ModalTransaksi extends Component
         $this->close();
     }
 
-    public function suggestCategoryWithAi(GeminiService $gemini): void
+    public function suggestCategoryWithAi(OpenAIService $openai): void
     {
         $this->ensureOperator();
         $this->resetAiState();
@@ -132,7 +132,7 @@ class ModalTransaksi extends Component
         $this->aiProcessing = true;
 
         try {
-            $suggestion = $gemini->suggestCategory($this->description, $categories->values()->all());
+            $suggestion = $openai->suggestCategory($this->description, $categories->values()->all());
 
             if (! $suggestion) {
                 $this->aiError = true;

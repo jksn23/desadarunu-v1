@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Transaction;
-use App\Services\GeminiService;
+use App\Services\OpenAIService;
 use App\Services\ReportExportService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -71,7 +71,7 @@ class HalamanLaporanKas extends Component
         ]);
     }
 
-    public function generateAiSummary(GeminiService $gemini): void
+    public function generateAiSummary(OpenAIService $openai): void
     {
         $this->aiProcessing = true;
         $this->aiError = null;
@@ -88,7 +88,7 @@ class HalamanLaporanKas extends Component
                 number_format($report['netCashFlow'], 0, ',', '.'),
             );
 
-            $summary = $gemini->summarizeReport($prompt);
+            $summary = $openai->summarizeReport($prompt);
 
             if (! $summary) {
                 $this->aiError = 'AI belum bisa menyusun ringkasan. Coba lagi nanti.';

@@ -42,7 +42,7 @@ new #[Layout('layouts.auth-guest')] class extends Component
                         <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-12 w-12 rounded-2xl bg-white/20 object-contain p-1">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Buku Kas Desa</p>
-                            <h2 class="text-2xl font-semibold">Transparansi Keuangan Darunu</h2>
+                            <h2 class="text-2xl font-semibold">Keuangan Darunu</h2>
                         </div>
                     </div>
                     <p class="text-sm text-blue-100 leading-relaxed">
@@ -83,7 +83,7 @@ new #[Layout('layouts.auth-guest')] class extends Component
                         <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-10 w-10 rounded-2xl bg-white/20 object-contain p-1">
                         <div>
                             <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">Buku Kas Desa</p>
-                            <h2 class="text-xl font-semibold">Transparansi Keuangan Darunu</h2>
+                            <h2 class="text-xl font-semibold">Keuangan Desa Darunu</h2>
                         </div>
                     </div>
                     <p class="mt-3 text-sm text-blue-100 leading-relaxed">

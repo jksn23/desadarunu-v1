@@ -42,7 +42,8 @@
         @endphp
         <div class="min-h-screen flex bg-gray-100">
             <aside class="fixed inset-y-0 left-0 hidden w-64 bg-white shadow-lg md:flex md:flex-col z-40">
-                <div class="flex items-center justify-center h-20 border-b border-gray-200">
+                <div class="flex items-center justify-center gap-3 h-20 border-b border-gray-200">
+                    <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-10 w-10 object-contain">
                     <span class="text-2xl font-bold text-blue-600">Desa Darunu</span>
                 </div>
                 @if (auth()->user()?->role === 'operator')
@@ -154,9 +155,12 @@
             <div class="flex flex-col flex-1 min-h-screen w-full md:ml-64">
                 <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-gray-200">
                     <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3 md:px-10">
-                        <div>
-                            <p class="text-xs uppercase tracking-wide text-gray-500">Buku Kas Desa</p>
-                            <h1 class="text-lg font-semibold text-gray-900 md:text-2xl">Desa Darunu</h1>
+                        <div class="flex items-center gap-3">
+                            <img src="{{ asset('images/logopemkab.png') }}" alt="Logo Pemkab" class="h-10 w-10 object-contain">
+                            <div>
+                                <p class="text-xs uppercase tracking-wide text-gray-500">Buku Kas Desa</p>
+                                <h1 class="text-lg font-semibold text-gray-900 md:text-2xl">Desa Darunu</h1>
+                            </div>
                         </div>
                         <div class="flex items-center gap-2 md:gap-3">
                             <button
