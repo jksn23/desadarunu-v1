@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Transaction;
 use App\Services\GeminiService;
+use App\Services\ReportExportService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
@@ -31,6 +32,22 @@ class HalamanLaporanKas extends Component
         }
     }
 
+    public function downloadExcel(ReportExportService $exporter)
+    {
+        return $exporter->exportArusKasCsv([
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+        ]);
+    }
+
+    public function downloadPdf(ReportExportService $exporter)
+    {
+        return $exporter->exportArusKasPdf([
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+        ]);
+    }
+
     public function updatedEndDate(): void
     {
         if ($this->endDate < $this->startDate) {
@@ -49,6 +66,8 @@ class HalamanLaporanKas extends Component
             'incomeByCategory' => $report['incomeByCategory'],
             'expenseByCategory' => $report['expenseByCategory'],
             'dailyTrend' => $report['dailyTrend'],
+            'aiSummary' => $this->aiSummary,
+            'aiError' => $this->aiError,
         ]);
     }
 
@@ -86,10 +105,7 @@ class HalamanLaporanKas extends Component
 
     private function calculateReport(): array
     {
-        $userId = auth()->id();
-
         $transactions = Transaction::with('category')
-            ->where('user_id', $userId)
             ->whereBetween('transaction_date', [$this->startDate, $this->endDate])
             ->get();
 

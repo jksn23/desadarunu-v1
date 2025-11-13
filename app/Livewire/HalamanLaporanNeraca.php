@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Transaction;
+use App\Services\ReportExportService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -18,8 +19,7 @@ class HalamanLaporanNeraca extends Component
 
     public function render()
     {
-        $transactions = Transaction::where('user_id', auth()->id())
-            ->whereDate('transaction_date', '<=', $this->asOfDate)
+        $transactions = Transaction::whereDate('transaction_date', '<=', $this->asOfDate)
             ->get();
 
         $totalIncome = $transactions->where('type', 'pemasukan')->sum('amount');
@@ -55,6 +55,20 @@ class HalamanLaporanNeraca extends Component
             'liabilities' => $liabilities,
             'equity' => $equity,
             'cashBalance' => $cashBalance,
+        ]);
+    }
+
+    public function downloadExcel(ReportExportService $exporter)
+    {
+        return $exporter->exportNeracaCsv([
+            'end_date' => $this->asOfDate,
+        ]);
+    }
+
+    public function downloadPdf(ReportExportService $exporter)
+    {
+        return $exporter->exportNeracaPdf([
+            'end_date' => $this->asOfDate,
         ]);
     }
 }

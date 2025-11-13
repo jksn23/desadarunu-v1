@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Transaction;
+use App\Services\ReportExportService;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -36,7 +37,6 @@ class HalamanLaporanLabaRugi extends Component
     public function render()
     {
         $transactions = Transaction::with('category')
-            ->where('user_id', auth()->id())
             ->whereBetween('transaction_date', [$this->startDate, $this->endDate])
             ->get();
 
@@ -55,6 +55,22 @@ class HalamanLaporanLabaRugi extends Component
             'topRevenues' => $topRevenues,
             'topExpenses' => $topExpenses,
             'periodSummary' => $periodSummary,
+        ]);
+    }
+
+    public function downloadExcel(ReportExportService $exporter)
+    {
+        return $exporter->exportLabaRugiCsv([
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
+        ]);
+    }
+
+    public function downloadPdf(ReportExportService $exporter)
+    {
+        return $exporter->exportLabaRugiPdf([
+            'start_date' => $this->startDate,
+            'end_date' => $this->endDate,
         ]);
     }
 

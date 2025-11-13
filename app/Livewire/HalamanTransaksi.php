@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Transaction;
+use App\Services\ActivityLogger;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Layout;
@@ -45,10 +46,7 @@ class HalamanTransaksi extends Component
 
     public function render()
     {
-        $userId = auth()->id();
-
-        $baseQuery = Transaction::with('category')
-            ->where('user_id', $userId);
+        $baseQuery = Transaction::with('category');
 
         $transactionsQuery = clone $baseQuery;
         $this->applyFilters($transactionsQuery);
@@ -70,7 +68,7 @@ class HalamanTransaksi extends Component
 
         $balance = $totalIncome - $totalExpense;
 
-        $latestTransactions = (clone $baseQuery)
+        $latestTransactions = Transaction::with('category')
             ->latest('transaction_date')
             ->limit(5)
             ->get();
@@ -142,5 +140,24 @@ class HalamanTransaksi extends Component
             'last_month' => 'Bulan Lalu',
             default => 'Semua Waktu',
         };
+    }
+
+    public function deleteTransaction(int $transactionId): void
+    {
+        abort_unless(auth()->user()?->role === 'admin_web', 403);
+
+        $transaction = Transaction::findOrFail($transactionId);
+        $transaction->delete();
+
+        app(ActivityLogger::class)->log([
+            'action' => 'delete_transaction',
+            'module' => 'transaksi',
+            'description' => 'Menghapus transaksi melalui daftar',
+            'metadata' => [
+                'transaction_id' => $transactionId,
+                'amount' => $transaction->amount,
+                'type' => $transaction->type,
+            ],
+        ]);
     }
 }
