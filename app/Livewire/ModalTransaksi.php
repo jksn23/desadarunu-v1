@@ -34,6 +34,7 @@ class ModalTransaksi extends Component
     #[On('open-transaksi-modal')]
     public function open(?int $transactionId = null): void
     {
+        $this->ensureOperator();
         $this->resetForm();
 
         if ($transactionId) {
@@ -46,6 +47,7 @@ class ModalTransaksi extends Component
     #[On('edit-transaksi')]
     public function edit(int $transactionId): void
     {
+        $this->ensureOperator();
         $this->open($transactionId);
     }
 
@@ -62,6 +64,7 @@ class ModalTransaksi extends Component
 
     public function save(): void
     {
+        $this->ensureOperator();
         $validated = $this->validate($this->rules(), [], $this->attributes());
 
         $amount = $this->normalizeAmount($validated['amount']);
@@ -93,6 +96,7 @@ class ModalTransaksi extends Component
 
     public function delete(int $transactionId): void
     {
+        $this->ensureOperator();
         Transaction::where('user_id', auth()->id())
             ->whereKey($transactionId)
             ->delete();
@@ -103,6 +107,7 @@ class ModalTransaksi extends Component
 
     public function suggestCategoryWithAi(GeminiService $gemini): void
     {
+        $this->ensureOperator();
         $this->resetAiState();
 
         if (blank($this->description)) {
@@ -252,5 +257,10 @@ class ModalTransaksi extends Component
         $this->aiProcessing = false;
         $this->aiMessage = null;
         $this->aiError = false;
+    }
+
+    private function ensureOperator(): void
+    {
+        abort_unless(auth()->user()?->role === 'operator', 403);
     }
 }

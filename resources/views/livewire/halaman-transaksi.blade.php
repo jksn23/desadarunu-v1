@@ -1,5 +1,8 @@
 @php
     $formatCurrency = fn (float $value) => 'Rp ' . number_format($value, 0, ',', '.');
+    $role = auth()->user()?->role;
+    $canManageTransactions = in_array($role, ['admin_web', 'admin_desa']);
+    $canCreateTransactions = $role === 'operator';
 @endphp
 
 <div class="space-y-6">
@@ -81,31 +84,33 @@
                     </select>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-full border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
-                    onclick="Livewire.dispatch('open-kategori-modal')"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 6h16" />
-                        <path d="M4 12h16" />
-                        <path d="M4 18h12" />
-                    </svg>
-                    Kelola Kategori
-                </button>
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition-colors"
-                    onclick="Livewire.dispatch('open-transaksi-modal')"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14" />
-                        <path d="M12 5v14" />
-                    </svg>
-                    Catat Transaksi
-                </button>
-            </div>
+            @if ($canCreateTransactions)
+                <div class="flex items-center gap-3">
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-blue-600 px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
+                        onclick="window.dispatchEvent(new CustomEvent('open-kategori-modal'))"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 6h16" />
+                            <path d="M4 12h16" />
+                            <path d="M4 18h12" />
+                        </svg>
+                        Kelola Kategori
+                    </button>
+                    <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-blue-700 transition-colors"
+                        onclick="window.dispatchEvent(new CustomEvent('open-transaksi-modal'))"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14" />
+                            <path d="M12 5v14" />
+                        </svg>
+                        Catat Transaksi
+                    </button>
+                </div>
+            @endif
         </div>
 
         <div class="mt-6 overflow-hidden rounded-2xl border border-gray-200">
@@ -117,7 +122,9 @@
                         <th class="px-5 py-3">Kategori</th>
                         <th class="px-5 py-3 text-right">Jumlah</th>
                         <th class="px-5 py-3 text-center">Jenis</th>
-                        <th class="px-5 py-3 text-right w-24">Aksi</th>
+                        @if ($canManageTransactions)
+                            <th class="px-5 py-3 text-right w-24">Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-sm">
@@ -143,22 +150,28 @@
                                     {{ ucfirst($transaction->type) }}
                                 </span>
                             </td>
-                            <td class="px-5 py-4 text-right">
-                                <button
-                                    type="button"
-                                    class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-blue-500 hover:text-blue-600 transition-colors"
-                                    onclick="Livewire.dispatch('edit-transaksi', {{ $transaction->id }})"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M12 20h9" />
-                                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                                    </svg>
-                                </button>
-                            </td>
+                            @if ($canManageTransactions)
+                                <td class="px-5 py-4 text-right">
+                                    <button
+                                        type="button"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 hover:border-red-500 hover:text-red-600 transition-colors"
+                                        wire:click="deleteTransaction({{ $transaction->id }})"
+                                        onclick="return confirm('Hapus transaksi ini?')"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 6h18" />
+                                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                            <path d="M10 11v6" />
+                                            <path d="M14 11v6" />
+                                        </svg>
+                                    </button>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-5 py-12 text-center text-gray-500">
+                            <td colspan="{{ $canManageTransactions ? 6 : 5 }}" class="px-5 py-12 text-center text-gray-500">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-400">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -169,7 +182,9 @@
                                         </svg>
                                     </div>
                                     <p class="text-sm font-medium text-gray-600">Belum ada transaksi pada periode ini.</p>
-                                    <p class="text-xs text-gray-400">Catat transaksi pertama Anda dengan tombol "Catat Transaksi".</p>
+                                    @if ($canCreateTransactions)
+                                        <p class="text-xs text-gray-400">Catat transaksi pertama Anda dengan tombol "Catat Transaksi".</p>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

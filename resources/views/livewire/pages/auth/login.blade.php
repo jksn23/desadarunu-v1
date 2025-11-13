@@ -20,7 +20,16 @@ new #[Layout('layouts.auth-guest')] class extends Component
 
         Session::regenerate();
 
-        $this->redirectIntended(default: route('transaksi', absolute: false), navigate: true);
+        $this->redirectIntended(default: $this->redirectPath(), navigate: true);
+    }
+
+    private function redirectPath(): string
+    {
+        return match (auth()->user()?->role) {
+            'admin_web' => route('admin.dashboard', absolute: false),
+            'admin_desa' => route('admin-desa.dashboard', absolute: false),
+            default => route('transaksi', absolute: false),
+        };
     }
 }; ?>
 
@@ -175,11 +184,9 @@ new #[Layout('layouts.auth-guest')] class extends Component
                             </span>
                         </button>
 
-                        @if (Route::has('register'))
-                            <p class="text-xs text-slate-500 text-center">
-                                Belum punya akun? <a href="{{ route('register') }}" wire:navigate class="font-semibold text-blue-600 hover:text-blue-700">Daftar perangkat desa</a>.
-                            </p>
-                        @endif
+                        <p class="text-xs text-slate-500 text-center">
+                            Tidak memiliki akses? Hubungi admin desa atau admin website.
+                        </p>
                     </form>
                 </div>
             </div>

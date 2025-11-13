@@ -144,7 +144,7 @@ class HalamanTransaksi extends Component
 
     public function deleteTransaction(int $transactionId): void
     {
-        abort_unless(auth()->user()?->role === 'admin_web', 403);
+        abort_unless(in_array(auth()->user()?->role, ['admin_web', 'admin_desa']), 403);
 
         $transaction = Transaction::findOrFail($transactionId);
         $transaction->delete();

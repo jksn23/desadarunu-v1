@@ -101,7 +101,7 @@
                         <label class="text-sm font-medium text-gray-600">Kategori</label>
                         @if ($categories->isEmpty())
                             <div class="mt-2 rounded-xl border border-dashed border-blue-300 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-                                Belum ada kategori. <button type="button" class="font-semibold underline" onclick="Livewire.dispatch('open-kategori-modal')">Tambah kategori sekarang.</button>
+                                Belum ada kategori. <button type="button" class="font-semibold underline" onclick="window.dispatchEvent(new CustomEvent('open-kategori-modal'))">Tambah kategori sekarang.</button>
                             </div>
                         @else
                             <select
